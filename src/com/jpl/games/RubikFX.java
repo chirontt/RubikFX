@@ -1,13 +1,17 @@
 package com.jpl.games;
 
-import com.jpl.games.model.Move;
-import com.jpl.games.model.Moves;
-import com.jpl.games.model.Rubik;
+import static com.jpl.games.FxDialogs.*;
+
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import com.jpl.games.model.Move;
+import com.jpl.games.model.Moves;
+import com.jpl.games.model.Rubik;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -19,6 +23,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
@@ -27,9 +32,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  *
@@ -64,15 +66,11 @@ public class RubikFX extends Application {
                                   new Button("Yi"),new Button("Z"),new Button("Zi"));
         Button bReset=new Button("Restart");
         bReset.setDisable(true);
+        ButtonType[] yesNoButtons = {ButtonType.YES, ButtonType.NO};
         bReset.setOnAction(e->{
             if(moves.getNumMoves()>0){
-                Action response = Dialogs.create()
-                .owner(stage)
-                .title("Warning Dialog")
-                .masthead("Restart Game")
-                .message( "You will lose all your previous movements. Do you want to continue?")
-                .showConfirm();
-                if(response==Dialog.Actions.YES){
+                if (showConfirm("Warning Dialog", "Restart Game",
+                                "You will lose all your previous movements. Do you want to continue?", yesNoButtons) == ButtonType.YES) {
                     moves.getMoves().clear();
                     rubik.doReset();
                 }
@@ -81,13 +79,8 @@ public class RubikFX extends Application {
         Button bSc=new Button("Scramble");
         bSc.setOnAction(e->{
             if(moves.getNumMoves()>0){
-                Action response = Dialogs.create()
-                .owner(stage)
-                .title("Warning Dialog")
-                .masthead("Scramble Cube")
-                .message( "You will lose all your previous movements. Do you want to continue?")
-                .showConfirm();
-                if(response==Dialog.Actions.YES){
+                if (showConfirm("Warning Dialog", "Scramble Cube",
+                                "You will lose all your previous movements. Do you want to continue?", yesNoButtons) == ButtonType.YES) {
                     rubik.doReset();
                     doScramble();
                 }
@@ -115,19 +108,11 @@ public class RubikFX extends Application {
         bSeq.setOnAction(e->{
             String response;
             if(moves.getNumMoves()>0){
-                response = Dialogs.create()
-                .owner(stage)
-                .title("Warning Dialog")
-                .masthead("Loading a Sequence").lightweight()
-                .message("Add a valid sequence of movements:\n(previous movements will be discarded)")
-                .showTextInput(moves.getSequence());
+                response = showTextInput("Warning Dialog", "Loading a Sequence",
+                        "Add a valid sequence of movements:\n(previous movements will be discarded)", moves.getSequence());
             } else {
-                response = Dialogs.create()
-                .owner(stage)
-                .title("Information Dialog")
-                .masthead("Loading a Sequence").lightweight()
-                .message( "Add a valid sequence of movements")
-                .showTextInput();
+                response = showTextInput("Information Dialog", "Loading a Sequence",
+                        "Add a valid sequence of movements", null);
             }
             System.out.println("r: "+response);
             if(response!=null && !response.isEmpty()){

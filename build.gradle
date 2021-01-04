@@ -1,0 +1,120 @@
+plugins {
+	id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'  //requires JDK11+
+}
+
+wrapper {
+    gradleVersion = '6.7.1'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+group = 'com.jpl.games'
+
+ext {
+    mainClassName = 'com.jpl.games.RubikFX'
+    launcherClassName = 'com.jpl.games.Launcher'
+    javafxVersion = '11.0.2'  //requires JDK11+
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+}
+
+compileJava {
+    options.release = 11  //use JDK11+ for compiling & running
+    options.encoding = 'UTF-8'
+}
+
+javafx {
+    version = javafxVersion
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing']
+}
+
+configurations {
+    //define a configuration for other supported OS native libraries (apart from the current OS)
+    otherOSnatives
+}
+
+dependencies {
+    implementation files('lib/Viewer3D.jar')
+
+    def currentOS = javafx.platform.classifier
+    ['linux', 'mac', 'win'].each { classifier ->
+        if (classifier != currentOS) {
+            otherOSnatives "org.openjfx:javafx-base:$javafxVersion:$classifier"
+            otherOSnatives "org.openjfx:javafx-controls:$javafxVersion:$classifier"
+            otherOSnatives "org.openjfx:javafx-fxml:$javafxVersion:$classifier"
+            otherOSnatives "org.openjfx:javafx-graphics:$javafxVersion:$classifier"
+            otherOSnatives "org.openjfx:javafx-swing:$javafxVersion:$classifier"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            //initialize the srcDirs property to remove the default src/main/resources,
+            //and add other resources from src (excluding *.java by default)
+            srcDirs = ['src']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': project.mainClassName,
+            'JavaFX-Version': javafxVersion,
+            'Built-By': System.getProperty('user.name'),
+            'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
+            'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
+        )
+    }
+}
+
+application {
+    mainClass = project.mainClassName
+    executableDir = ''
+    applicationDefaultJvmArgs = ['--module-path', 'lib', '--add-modules', 'javafx.controls,javafx.fxml,javafx.swing']
+}
+
+//main distribution generated would be platform-specific to the current OS
+//hence the distribution's name should reflect that
+distributions.main.distributionBaseName = project.name + '-' + javafx.platform.classifier
+
+run {
+    //args '...'
+
+    debugOptions {
+        enabled = true
+        port = 5566
+        server = true
+        suspend = false
+    }
+}
+
+//make an executable fat jar including all dependencies
+//which should work in all supported OS'es (Windows, Mac and Linux)
+task fatJar(type: Jar) {
+    archiveFileName = project.name + '-no-deps.jar'
+    manifest {
+        attributes(
+            'Main-Class': project.launcherClassName,
+            'JavaFX-Version': javafxVersion,
+            'Built-By': System.getProperty('user.name'),
+            'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
+            'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
+        )
+    }
+    from {
+        def allClasspaths = sourceSets.main.output + configurations.runtimeClasspath + configurations.otherOSnatives
+        allClasspaths.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy 'exclude'
+}
+
