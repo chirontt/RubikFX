@@ -1,23 +1,57 @@
-RubikFX
-=======
+# RubikFX
 
-A JavaFX based application for playing with a 3D model of the Rubik's Cube by rotating 
-layers or the whole cube, with this additional features:
+A JavaFX-based application for playing with a 3D model of the Rubik's Cube by rotating 
+layers or the whole cube (as originally described [here](https://github.com/jperedadnr/RubikFX) by José Pereda.)
 
-* preview of rotation direction when hovering over the toolbar buttons
-* pick cubies with mouse pressed, and select direction with mouse dragged, perform rotation with
-  mouse released (if long movement) or cancelled rotation if mouse released (short movement)
-* scramble the cube, perform a sequence of movements, restart or replay the game
-* count of moves and time of play
-* added dialogs
+This fork adds the Gradle wrapper and build script to build and package this application.
 
-Explained here: http://jperedadnr.blogspot.com.es/2014/04/rubikfx-solving-rubiks-cube-with-javafx.html
- 
-Requires Java 8: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+The Gradle build script produces a stand-alone `RubikFX` application, for Java/JavaFX 11+.
 
-Requires 3DViewer from OpenJFX. It can be download it from here: 
-http://hg.openjdk.java.net/openjfx/8/master/rt/file/f89b7dc932af/apps/experiments/3DViewer
+## Gradle tasks
 
-Requires ControlsFX from here: http://fxexperience.com/downloads/controlsfx-8.0.5.zip
+To build and run the `RubikFX` application, execute the Gradle `run` command:
 
-José Pereda - April 2014 - https://twitter.com/JPeredaDnr
+	gradlew run
+
+To create an "exploded" distribution:
+
+	gradlew installDist
+
+and the *platform-specific* distribution should be available in `build/install` directory. The `RubikFX` application can then be executed on the command line:
+
+	cd build/install/RubikFX-linux
+	./RubikFX
+
+(or if building on a Windows machine:
+
+	cd build\install\RubikFX-win
+	RubikFX.bat
+
+)
+
+To create a zip distribution:
+
+	gradlew distZip
+
+and the *platform-specific* zip distribution, e.g. `RubikFX-win.zip`, should be available in `build/distributions` directory. This file is the zipped version of the above "exploded" distribution.
+
+To create an executable fat jar which includes all dependencies for all supported OS'es:
+
+	gradlew fatJar
+
+and the resulting `RubikFX-no-deps.jar` file should be created in `build/libs` and can be executed directly with the java command:
+
+	java -jar build/libs/RubikFX-no-deps.jar
+
+(or if building on a Windows machine:
+
+	java -jar build\libs\RubikFX-no-deps.jar
+
+)
+
+This fat jar should be portable across all three supported OS'es (Windows, Mac and Linux.)
+
+## IDE support
+
+The project can be imported as-is to any IDE such as Eclipse, IntelliJ IDEA, etc, which understands a Gradle project structure.
+
