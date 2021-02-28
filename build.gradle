@@ -1,10 +1,11 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'  //requires JDK11+
+    id 'com.gluonhq.client-gradle-plugin' version '0.1.36'  //requires GraalVM 21+
 }
 
 wrapper {
-    gradleVersion = '6.7.1'
+    gradleVersion = '6.8.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -13,13 +14,12 @@ group = 'com.jpl.games'
 ext {
     mainClassName = 'com.jpl.games.RubikFX'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '11.0.2'  //requires JDK11+
+    javafxVersion = '15.0.1'  //requires JDK11+
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
 }
 
 compileJava {
@@ -88,14 +88,21 @@ application {
 distributions.main.distributionBaseName = project.name + '-' + javafx.platform.classifier
 
 run {
-    //args '...'
+    //use the following jvmArgs for as many different run scenarios as possible,
+    //and for all the code-execution paths as much as possible,
+    //to generate (or merge with) the GraalVM native-image configuration files
+    //in the src/META-INF/native-image directory.
+    //This directory is read by GraalVM during the native-image build.
+
+    //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=src/META-INF/native-image"]
 
     debugOptions {
-        enabled = true
+        enabled = false
         port = 5566
         server = true
         suspend = false
     }
+
 }
 
 //make an executable fat jar including all dependencies
@@ -118,3 +125,8 @@ task fatJar(type: Jar) {
     duplicatesStrategy 'exclude'
 }
 
+gluonClient {
+    compilerArgs = [
+        '--allow-incomplete-classpath',
+    ]
+}

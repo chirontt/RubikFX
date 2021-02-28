@@ -5,11 +5,15 @@ layers or the whole cube (as originally described [here](https://github.com/jper
 
 This fork adds the Gradle wrapper and build script to build and package this application.
 
-The Gradle build script produces a stand-alone `RubikFX` application, for Java/JavaFX 11+.
+The Gradle build script produces a `RubikFX` application, for running in standard JVM/JavaFX 11+.
+The build script can also produce stand-alone native executables, using [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image/) utility,
+for common platforms (Windows, Mac and Linux.)
 
 ## Gradle tasks
 
-To build and run the `RubikFX` application, execute the Gradle `run` command:
+### Building for standard JVM environment
+
+To build and run the `RubikFX` application in standard JVM environment, execute the Gradle `run` command:
 
 	gradlew run
 
@@ -49,7 +53,39 @@ and the resulting `RubikFX-no-deps.jar` file should be created in `build/libs` a
 
 )
 
-This fat jar should be portable across all three supported OS'es (Windows, Mac and Linux.)
+This `RubikFX-no-deps.jar` file should be portable across all three supported OS'es (Windows, Mac and Linux.)
+
+### Building native executable
+
+RubikFX can be compiled to a stand-alone native executable, e.g. producing `RubikFX.exe` in Windows,
+using the [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image) utility.
+The link shows how to set up GraalVM and its native-image utility for common platforms.
+[Gluon](https://gluonhq.com/) also provides some setup [details](https://docs.gluonhq.com/#_platforms) for GraalVM native image creation.
+
+The Gradle build script uses [client-gradle-plugin](https://github.com/gluonhq/client-gradle-plugin)
+from Gluon to build the native executable from Gradle with GraalVM.
+GraalVM native-image utility will use the configuration files in `src/META-INF/native-image` folder
+to assist in native-image generation.
+
+Once the GraalVM prerequisites are set up for the current platform,
+run the `nativeBuild` task to produce a native executable:
+
+	gradlew nativeBuild
+
+The `nativeBuild` task will take a while to finish, resulting in a native executable file at:
+
+	build/client/x86_64-linux/RubikFX
+
+(or if building on a Windows machine:
+
+	build\client\x86_64-windows\RubikFX.exe
+
+)
+
+The resulting `RubikFX` native executable can be further reduced in size via compression using the [UPX](https://upx.github.io) utility, as described [here](https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214).
+
+As an example, the resulting `RubikFX.exe` Windows executable produced here is normally 66MB in size,
+but is compressed to 17MB with the UPX command: `upx --best RubikFX.exe`
 
 ## IDE support
 
