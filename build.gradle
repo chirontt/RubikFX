@@ -1,20 +1,22 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'  //requires JDK11+
-    id 'com.gluonhq.client-gradle-plugin' version '0.1.36'  //requires GraalVM 21+
+    id 'org.openjfx.javafxplugin' version '0.0.10'  //requires JDK11+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.4'  //requires GraalVM 21.1+
 }
 
 wrapper {
-    gradleVersion = '6.8.3'
+    gradleVersion = '7.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 group = 'com.jpl.games'
+version = '1.0.0-SNAPSHOT'
 
 ext {
     mainClassName = 'com.jpl.games.RubikFX'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '15.0.1'  //requires JDK11+
+    javafxVersion = '16'  //requires JDK11+
+    currentPlatform = javafx.platform.classifier
 }
 
 repositories {
@@ -40,9 +42,8 @@ configurations {
 dependencies {
     implementation files('lib/Viewer3D.jar')
 
-    def currentOS = javafx.platform.classifier
     ['linux', 'mac', 'win'].each { classifier ->
-        if (classifier != currentOS) {
+        if (classifier != currentPlatform) {
             otherOSnatives "org.openjfx:javafx-base:$javafxVersion:$classifier"
             otherOSnatives "org.openjfx:javafx-controls:$javafxVersion:$classifier"
             otherOSnatives "org.openjfx:javafx-fxml:$javafxVersion:$classifier"
@@ -60,7 +61,7 @@ sourceSets {
         resources {
             //initialize the srcDirs property to remove the default src/main/resources,
             //and add other resources from src (excluding *.java by default)
-            srcDirs = ['src']
+            srcDirs = ['src', "graal-cfg/$currentPlatform"]
         }
     }
 }
@@ -73,6 +74,7 @@ jar {
             'Built-By': System.getProperty('user.name'),
             'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
+            'Automatic-Module-Name': project.group + '.rubikfx',
         )
     }
 }
@@ -80,21 +82,21 @@ jar {
 application {
     mainClass = project.mainClassName
     executableDir = ''
-    applicationDefaultJvmArgs = ['--module-path', 'lib', '--add-modules', 'javafx.controls,javafx.fxml,javafx.swing']
+    applicationDefaultJvmArgs = ['--module-path', 'lib', '--add-modules', javafx.modules.join(',')]
 }
 
 //main distribution generated would be platform-specific to the current OS
 //hence the distribution's name should reflect that
-distributions.main.distributionBaseName = project.name + '-' + javafx.platform.classifier
+distributions.main.distributionBaseName = project.name + '-' + currentPlatform
 
 run {
     //use the following jvmArgs for as many different run scenarios as possible,
     //and for all the code-execution paths as much as possible,
     //to generate (or merge with) the GraalVM native-image configuration files
-    //in the src/META-INF/native-image directory.
-    //This directory is read by GraalVM during the native-image build.
+    //in the graal-cfg/<currentPlatform>/META-INF/native-image directory.
+    //This directory is used by GraalVM during the native-image build.
 
-    //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=src/META-INF/native-image"]
+    //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=graal-cfg/$currentPlatform/META-INF/native-image"]
 
     debugOptions {
         enabled = false
@@ -105,10 +107,11 @@ run {
 
 }
 
-//make an executable fat jar including all dependencies
+//make an executable uber jar including all dependencies
 //which should work in all supported OS'es (Windows, Mac and Linux)
-task fatJar(type: Jar) {
-    archiveFileName = project.name + '-no-deps.jar'
+task uberJar(type: Jar) {
+    with jar
+    archiveClassifier = 'no-deps'
     manifest {
         attributes(
             'Main-Class': project.launcherClassName,
@@ -116,16 +119,17 @@ task fatJar(type: Jar) {
             'Built-By': System.getProperty('user.name'),
             'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
+            'Automatic-Module-Name': project.group + '.rubikfx',
         )
     }
     from {
-        def allClasspaths = sourceSets.main.output + configurations.runtimeClasspath + configurations.otherOSnatives
+        def allClasspaths = configurations.runtimeClasspath + configurations.otherOSnatives
         allClasspaths.collect { it.isDirectory() ? it : zipTree(it) }
     }
     duplicatesStrategy 'exclude'
 }
 
-gluonClient {
+gluonfx {
     compilerArgs = [
         '--allow-incomplete-classpath',
     ]

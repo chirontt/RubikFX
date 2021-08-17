@@ -1,70 +1,58 @@
 # RubikFX
 
 A JavaFX-based application for playing with a 3D model of the Rubik's Cube by rotating 
-layers or the whole cube (as originally described [here](https://github.com/jperedadnr/RubikFX) by José Pereda.)
+layers or the whole cube (as originally described [here](https://github.com/jperedadnr/RubikFX)
+by José Pereda.)
 
-This fork adds the Gradle wrapper and build script to build and package this application.
+<pre>
+	<img src="RubikFX.jpg"/>
+</pre>
 
-The Gradle build script produces a `RubikFX` application, for running in standard JVM/JavaFX 11+.
-The build script can also produce stand-alone native executables, using [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image/) utility,
-for common platforms (Windows, Mac and Linux.)
+This fork adds the Gradle and Maven wrappers and build scripts to compile and package this application.
 
-## Gradle tasks
+The Gradle or Maven build script produces a `RubikFX` application, for running in standard JVM/JavaFX 11+.
+The build scripts can also produce stand-alone native executables, using
+[GraalVM native-image](https://www.graalvm.org/reference-manual/native-image/) utility,
+for common platforms (Windows, and Linux.)
+
+## Gradle build tasks
 
 ### Building for standard JVM environment
 
-To build and run the `RubikFX` application in standard JVM environment, execute the Gradle `run` command:
+To build and run the `RubikFX` application in standard JVM environment, execute the Gradle `run` task:
 
 	gradlew run
 
-To create an "exploded" distribution:
+To create an executable uber jar which includes all dependencies for all supported OS'es:
 
-	gradlew installDist
+	gradlew uberJar
 
-and the *platform-specific* distribution should be available in `build/install` directory. The `RubikFX` application can then be executed on the command line:
+and the resulting `RubikFX-1.0.0-SNAPSHOT-no-deps.jar` file should be created in `build/libs` directory,
+and can be executed directly with the `java` command:
 
-	cd build/install/RubikFX-linux
-	./RubikFX
-
-(or if building on a Windows machine:
-
-	cd build\install\RubikFX-win
-	RubikFX.bat
-
-)
-
-To create a zip distribution:
-
-	gradlew distZip
-
-and the *platform-specific* zip distribution, e.g. `RubikFX-win.zip`, should be available in `build/distributions` directory. This file is the zipped version of the above "exploded" distribution.
-
-To create an executable fat jar which includes all dependencies for all supported OS'es:
-
-	gradlew fatJar
-
-and the resulting `RubikFX-no-deps.jar` file should be created in `build/libs` and can be executed directly with the java command:
-
-	java -jar build/libs/RubikFX-no-deps.jar
+	java -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps.jar
 
 (or if building on a Windows machine:
 
-	java -jar build\libs\RubikFX-no-deps.jar
+	java -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps.jar
 
 )
 
-This `RubikFX-no-deps.jar` file should be portable across all three supported OS'es (Windows, Mac and Linux.)
+This `RubikFX-1.0.0-SNAPSHOT-no-deps.jar` file should be portable across all
+three supported OS'es (Windows, Mac and Linux.)
 
 ### Building native executable
 
 RubikFX can be compiled to a stand-alone native executable, e.g. producing `RubikFX.exe` in Windows,
 using the [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image) utility.
 The link shows how to set up GraalVM and its native-image utility for common platforms.
-[Gluon](https://gluonhq.com/) also provides some setup [details](https://docs.gluonhq.com/#_platforms) for GraalVM native image creation.
+[Gluon](https://gluonhq.com/) also provides some setup [details](https://docs.gluonhq.com/#_platforms)
+for GraalVM native image creation.
 
-The Gradle build script uses [client-gradle-plugin](https://github.com/gluonhq/client-gradle-plugin)
+The Gradle build script uses [gluonfx-gradle-plugin](https://github.com/gluonhq/gluonfx-gradle-plugin)
 from Gluon to build the native executable from Gradle with GraalVM.
-GraalVM native-image utility will use the configuration files in `src/META-INF/native-image` folder
+GraalVM native-image utility will use the configuration files in
+`graal-cfg/<currentPlatform>/META-INF/native-image` folder
 to assist in native-image generation.
 
 Once the GraalVM prerequisites are set up for the current platform,
@@ -74,20 +62,77 @@ run the `nativeBuild` task to produce a native executable:
 
 The `nativeBuild` task will take a while to finish, resulting in a native executable file at:
 
-	build/client/x86_64-linux/RubikFX
+	build/gluonfx/x86_64-linux/RubikFX
 
 (or if building on a Windows machine:
 
-	build\client\x86_64-windows\RubikFX.exe
+	build\gluonfx\x86_64-windows\RubikFX.exe
 
 )
 
-The resulting `RubikFX` native executable can be further reduced in size via compression using the [UPX](https://upx.github.io) utility, as described [here](https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214).
+## Maven build tasks
 
-As an example, the resulting `RubikFX.exe` Windows executable produced here is normally 66MB in size,
-but is compressed to 17MB with the UPX command: `upx --best RubikFX.exe`
+### Building for standard JVM environment
+
+To build and run the `RubikFX` application in standard JVM environment, execute the Maven `javafx:run` task:
+
+	mvnw javafx:run
+
+To create an executable uber jar which includes all dependencies for the current platform:
+
+	mvnw package
+
+and the resulting `rubikfx-1.0.0-SNAPSHOT-no-deps-<platform>.jar` file should be created in
+`target` directory, and can be executed directly with the `java` command:
+
+	java -jar target/rubikfx-1.0.0-SNAPSHOT-no-deps-linux.jar
+
+(or if building on a Windows machine:
+
+	java -jar target\rubikfx-1.0.0-SNAPSHOT-no-deps-win.jar
+
+)
+
+### Building native executable
+
+RubikFX can be compiled to a stand-alone native executable, e.g. producing `RubikFX.exe` in Windows,
+using the [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image) utility.
+The link shows how to set up GraalVM and its native-image utility for common platforms.
+[Gluon](https://gluonhq.com/) also provides some setup [details](https://docs.gluonhq.com/#_platforms)
+for GraalVM native image creation.
+
+The Maven build script uses [gluonfx-maven-plugin](https://github.com/gluonhq/gluonfx-maven-plugin)
+from Gluon to build the native executable from Maven with GraalVM.
+GraalVM native-image utility will use the configuration files in
+`graal-cfg/<currentPlatform>/META-INF/native-image` folder
+to assist in native-image generation.
+
+Once the GraalVM prerequisites are set up for the current platform,
+run the `gluonfx:build` task to produce a native executable:
+
+	mvnw gluonfx:build
+
+The `gluonfx:build` task will take a while to finish, resulting in a native executable file at:
+
+	target/gluonfx/x86_64-linux/RubikFX
+
+(or if building on a Windows machine:
+
+	target\gluonfx\x86_64-windows\RubikFX.exe
+
+)
+
+## Compressed native executable
+
+The resulting `RubikFX` native executable, whether produced by Gradle or Maven build script,
+can be further reduced in size via compression using the [UPX](https://upx.github.io)
+utility, as described [here](https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214).
+
+For example, the resulting `RubikFX.exe` native executable produced in Windows is normally 62MB in size,
+but is compressed to 16MB with the UPX command: `upx --best RubikFX.exe`
 
 ## IDE support
 
-The project can be imported as-is to any IDE such as Eclipse, IntelliJ IDEA, etc, which understands a Gradle project structure.
+The project can be imported as-is to any IDE such as Eclipse, IntelliJ IDEA, etc, which understands
+a Gradle and/or Maven project structure.
 

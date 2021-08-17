@@ -10,10 +10,6 @@
   "name":"com.sun.glass.ui.Screen"
 },
 {
-  "name":"com.sun.glass.ui.gtk.GtkPlatformFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.sun.glass.ui.win.WinDnDClipboard"
 },
 {
@@ -25,10 +21,6 @@
 },
 {
   "name":"com.sun.javafx.font.directwrite.DWFactory",
-  "methods":[{"name":"getFactory","parameterTypes":[] }]
-},
-{
-  "name":"com.sun.javafx.font.freetype.FTFactory",
   "methods":[{"name":"getFactory","parameterTypes":[] }]
 },
 {
@@ -57,14 +49,6 @@
 {
   "name":"com.sun.prism.d3d.D3DPipeline",
   "methods":[{"name":"getInstance","parameterTypes":[] }]
-},
-{
-  "name":"com.sun.prism.es2.ES2Pipeline",
-  "methods":[{"name":"getInstance","parameterTypes":[] }]
-},
-{
-  "name":"com.sun.prism.es2.X11GLFactory",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.prism.shader.FillPgram_Color_AlphaTest_Loader",
@@ -105,10 +89,6 @@
 {
   "name":"com.sun.prism.shader.Texture_LinearGradient_PAD_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
-  "name":"com.sun.scenario.effect.impl.es2.ES2ShaderSource",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.scenario.effect.impl.hw.d3d.D3DShaderSource",
