@@ -1,11 +1,11 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'  //requires JDK11+
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.4'  //requires GraalVM 21.1+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.8'  //requires GraalVM 21.1+
 }
 
-wrapper {
-    gradleVersion = '7.2'
+tasks.wrapper {
+    gradleVersion = '7.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -15,7 +15,7 @@ version = '1.0.0-SNAPSHOT'
 ext {
     mainClassName = 'com.jpl.games.RubikFX'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '16'  //requires JDK11+
+    javafxVersion = '17.0.1'  //requires JDK11+
     currentPlatform = javafx.platform.classifier
 }
 

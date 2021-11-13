@@ -1,12 +1,22 @@
 {
   "resources":{
   "includes":[
-    {"pattern":"\\Qcom/jpl/games/model3d/Cube.obj\\E"}, 
-    {"pattern":"\\Qcom/jpl/games/model3d/arrow.obj\\E"}, 
-    {"pattern":"\\Qcom/jpl/games/model3d/axis.obj\\E"}
+    {
+      "pattern":"\\Qcom/jpl/games/model3d/Cube.obj\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jpl/games/model3d/arrow.obj\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jpl/games/model3d/axis.obj\\E"
+    }
   ]},
   "bundles":[
-    {"name":"com.sun.javafx.tk.quantum.QuantumMessagesBundle"}, 
-    {"name":"com/sun/javafx/scene/control/skin/resources/controls"}
+    {
+      "name":"com.sun.javafx.tk.quantum.QuantumMessagesBundle"
+    }, 
+    {
+      "name":"com/sun/javafx/scene/control/skin/resources/controls"
+    }
   ]
 }
