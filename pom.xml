@@ -12,7 +12,7 @@
     <properties>
         <javafx.version>17.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-        <gluonfx.maven.plugin.version>1.0.9</gluonfx.maven.plugin.version>
+        <gluonfx.maven.plugin.version>1.0.10</gluonfx.maven.plugin.version>
         <main.class>com.jpl.games.RubikFX</main.class>
         <launcher.class>com.jpl.games.Launcher</launcher.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +81,7 @@
                     <mainClass>${main.class}</mainClass>
                     <nativeImageArgs>
                         <arg>--allow-incomplete-classpath</arg>
+                        <arg>-H:+TraceNativeToolUsage</arg>
                     </nativeImageArgs>
                 </configuration>
             </plugin>

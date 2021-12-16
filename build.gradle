@@ -1,11 +1,11 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'  //requires JDK11+
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.8'  //requires GraalVM 21.1+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.10'  //requires GraalVM 21.1+
 }
 
 tasks.wrapper {
-    gradleVersion = '7.3'
+    gradleVersion = '7.3.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -132,5 +132,6 @@ task uberJar(type: Jar) {
 gluonfx {
     compilerArgs = [
         '--allow-incomplete-classpath',
+        '-H:+TraceNativeToolUsage',
     ]
 }
