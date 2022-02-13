@@ -56,7 +56,7 @@ for GraalVM native image creation.
 The Gradle build script uses [gluonfx-gradle-plugin](https://github.com/gluonhq/gluonfx-gradle-plugin)
 from Gluon to build the native executable from Gradle with GraalVM.
 GraalVM native-image utility will use the configuration files in
-`graal-cfg/<currentPlatform>/META-INF/native-image` folder
+`src/graal-cfg/<currentPlatform>/META-INF/native-image` folder
 to assist in native-image generation.
 
 Once the GraalVM prerequisites are set up for the current platform,
@@ -108,7 +108,7 @@ for GraalVM native image creation.
 The Maven build script uses [gluonfx-maven-plugin](https://github.com/gluonhq/gluonfx-maven-plugin)
 from Gluon to build the native executable from Maven with GraalVM.
 GraalVM native-image utility will use the configuration files in
-`graal-cfg/<currentPlatform>/META-INF/native-image` folder
+`src/graal-cfg/<currentPlatform>/META-INF/native-image` folder
 to assist in native-image generation.
 
 Once the GraalVM prerequisites are set up for the current platform,
