@@ -1,14 +1,18 @@
 # RubikFX
 
-A JavaFX-based application for playing with a 3D model of the Rubik's Cube by rotating 
-layers or the whole cube (as originally described [here](https://github.com/jperedadnr/RubikFX)
+A JavaFX-based desktop application for playing with a 3D model of the Rubik's Cube by rotating 
+layers or the whole cube (as originally described [upstream](https://github.com/jperedadnr/RubikFX)
 by José Pereda.)
 
-<pre>
-	<img src="RubikFX.jpg"/>
-</pre>
+![screenshot](RubikFX.jpg "RubixFX")
 
-This fork adds the Gradle and Maven wrappers and build scripts to compile and package this application.
+For a version that can build a native image for desktop, Android and/or iOS platforms,
+see [rubiks-cube](https://github.com/gluonhq/gluon-samples/tree/master/rubiks-cube).
+
+---
+
+This fork adds the Gradle and Maven wrappers and build scripts to compile and package
+this desktop application.
 
 The Gradle or Maven build script produces a `RubikFX` application, for running in standard JVM/JavaFX 11+.
 The build scripts can also produce stand-alone native executables, using
@@ -121,15 +125,6 @@ The `gluonfx:build` task will take a while to finish, resulting in a native exec
 	target\gluonfx\x86_64-windows\RubikFX.exe
 
 )
-
-## Compressed native executable
-
-The resulting `RubikFX` native executable, whether produced by Gradle or Maven build script,
-can be further reduced in size via compression using the [UPX](https://upx.github.io)
-utility, as described [here](https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214).
-
-For example, the resulting `RubikFX.exe` native executable produced in Windows is normally 62MB in size,
-but is compressed to 16MB with the UPX command: `upx --best RubikFX.exe`
 
 ## IDE support
 

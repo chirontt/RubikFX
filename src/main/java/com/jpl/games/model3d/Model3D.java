@@ -1,44 +1,73 @@
+/*
+ * Copyright (c) 2016, 2021, Gluon
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Gluon, any associated website, nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL GLUON BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.jpl.games.model3d;
 
-import com.javafx.experiments.importers.obj.ObjImporter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
+import org.fxyz3d.importers.obj.ObjImporter;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
- *
+ * from https://github.com/gluonhq/gluon-samples/blob/master/rubiks-cube/src/main/java/com/jpl/games/model3d/Model3D.java
+ * 
  * @author jpereda, April 2014 - @JPeredaDnr
  */
 public class Model3D {
-    
-    /*
-    Cube.obj, downloaded from  http://tf3dm.com/3d-model/rubik39s-cube-79189.html from http://tf3dm.com/user/3dregenerator
-    Contains 117 meshes, so each of the 27 cubies has 5 to 6 meshes.
-    They are marked as "Block46", "Block46 (2)",...,"Block72 (6)" in this set:
-    */
-    private Set<String> meshes;
+
     /*
     HashMap to store a MeshView of each mesh with its key.
     */
-    private final Map<String,MeshView> mapMeshes=new HashMap<>();
+    private final Map<String, MeshView> mapMeshes = new HashMap<>();
     /*
     custom designed arrows to visually mark the face or axis of rotation.
     */
     private MeshView faceArrow;
     private MeshView axisArrow;
     
-    public Model3D(){
-        
+    public Model3D() {
+
     }
-    public void importObj(){
+
+    public void importObj() {
         try {// cube.obj
-            ObjImporter reader = new ObjImporter(getClass().getResource("Cube.obj").toExternalForm());
-            meshes=reader.getMeshes(); // set with the names of 117 meshes
+            org.fxyz3d.importers.Model3D reader = new ObjImporter().load(getClass().getResource("Cube.obj"));
+            /*
+    Cube.obj, downloaded from  http://tf3dm.com/3d-model/rubik39s-cube-79189.html
+    from http://tf3dm.com/user/3dregenerator
+    Contains 117 meshes, so each of the 27 cubies has 5 to 6 meshes.
+    They are marked as "Block46", "Block46 (2)",...,"Block72 (6)" in this set:
+    */
+            Set<String> meshes = reader.getMeshNames(); // set with the names of 117 meshes
             
             /*
             Since the model is oriented with White to the right and blue in the bottom,
@@ -63,11 +92,11 @@ public class Model3D {
             
             */
             
-            Affine affineIni=new Affine();            
+            Affine affineIni = new Affine();            
             affineIni.prepend(new Rotate(-90, Rotate.X_AXIS));
             affineIni.prepend(new Rotate(90, Rotate.Z_AXIS));
-            meshes.stream().forEach(s-> { 
-                MeshView cubiePart = reader.buildMeshView(s);
+            for (String s : meshes) { 
+                MeshView cubiePart = (MeshView) reader.getMeshView(s);
                 // every part of the cubie is transformed with both rotations:
                 cubiePart.getTransforms().add(affineIni); 
                 // since the model has Ns=0 it doesn't reflect light, so we change it to 1
@@ -75,23 +104,22 @@ public class Model3D {
                 material.setSpecularPower(1);
                 cubiePart.setMaterial(material);
                 // finally, add the name of the part and the cubie part to the hashMap:
-                mapMeshes.put(s,cubiePart); 
-            });
+                mapMeshes.put(s, cubiePart); 
+            }
         } catch (IOException e) {
             System.out.println("Error loading model "+e.toString());
         }
         try {// arrow.obj
-            ObjImporter reader = new ObjImporter(getClass().getResource("arrow.obj").toExternalForm());
-            String mesh = reader.getMeshes().iterator().next();
-            faceArrow = reader.buildMeshView(mesh);
+            org.fxyz3d.importers.Model3D reader = new ObjImporter().load(getClass().getResource("arrow.obj"));
+            String mesh = reader.getMeshNames().iterator().next();
+            faceArrow = (MeshView) reader.getMeshView(mesh);
         } catch (IOException e) {
             System.out.println("Error loading arrow "+e.toString());
         }
         try {// axis.obj
-            ObjImporter reader = new ObjImporter(getClass().getResource("axis.obj").toExternalForm());
-            String mesh = reader.getMeshes().iterator().next();
-            
-            axisArrow = reader.buildMeshView(mesh);
+            org.fxyz3d.importers.Model3D reader = new ObjImporter().load(getClass().getResource("axis.obj"));
+            String mesh = reader.getMeshNames().iterator().next();
+            axisArrow = (MeshView) reader.getMeshView(mesh);
         } catch (IOException e) {
             System.out.println("Error loading arrow "+e.toString());
         }
@@ -108,4 +136,5 @@ public class Model3D {
     public MeshView getAxisArrow() {
         return axisArrow;
     }
+
 }

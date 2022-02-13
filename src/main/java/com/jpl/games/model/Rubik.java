@@ -295,7 +295,7 @@ public class Rubik {
                         // number of block of cubie 46-72
                         String block=pickedMesh.getId().substring(5,7);
                         // number of cubie 0-26
-                        int indexOf = order.indexOf(new Integer(block));
+                        int indexOf = order.indexOf(Integer.valueOf(block));
                         // select face from cubie and two suitable rotations
                         selFaces=Utils.getPickedRotation(indexOf, pickedMesh);
                         // starting point on the scene (X,Y)

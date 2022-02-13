@@ -1,11 +1,11 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'  //requires JDK11+
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.10'  //requires GraalVM 21.1+
+    id 'org.openjfx.javafxplugin' version '0.0.11'  //requires JDK11+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.12'  //requires GraalVM 22.0+
 }
 
 tasks.wrapper {
-    gradleVersion = '7.3.2'
+    gradleVersion = '7.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -14,8 +14,9 @@ version = '1.0.0-SNAPSHOT'
 
 ext {
     mainClassName = 'com.jpl.games.RubikFX'
+    mainModuleName = 'rubikfx'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '17.0.1'  //requires JDK11+
+    javafxVersion = '17.0.2'  //requires JDK11+
     currentPlatform = javafx.platform.classifier
 }
 
@@ -40,7 +41,7 @@ configurations {
 }
 
 dependencies {
-    implementation files('lib/Viewer3D.jar')
+    implementation 'org.fxyz3d:fxyz3d-importers:0.5.4'
 
     ['linux', 'mac', 'win'].each { classifier ->
         if (classifier != currentPlatform) {
@@ -55,13 +56,9 @@ dependencies {
 
 sourceSets {
     main {
-        java {
-            srcDirs = ['src']
-        }
         resources {
-            //initialize the srcDirs property to remove the default src/main/resources,
-            //and add other resources from src (excluding *.java by default)
-            srcDirs = ['src', "graal-cfg/$currentPlatform"]
+            //include the GraalVM native-image configuration files
+            srcDir "src/graal-cfg/$currentPlatform"
         }
     }
 }
@@ -74,15 +71,14 @@ jar {
             'Built-By': System.getProperty('user.name'),
             'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
-            'Automatic-Module-Name': project.group + '.rubikfx',
         )
     }
 }
 
 application {
     mainClass = project.mainClassName
+    mainModule = project.mainModuleName
     executableDir = ''
-    applicationDefaultJvmArgs = ['--module-path', 'lib', '--add-modules', javafx.modules.join(',')]
 }
 
 //main distribution generated would be platform-specific to the current OS
@@ -93,10 +89,10 @@ run {
     //use the following jvmArgs for as many different run scenarios as possible,
     //and for all the code-execution paths as much as possible,
     //to generate (or merge with) the GraalVM native-image configuration files
-    //in the graal-cfg/<currentPlatform>/META-INF/native-image directory.
+    //in the src/graal-cfg/<currentPlatform>/META-INF/native-image directory.
     //This directory is used by GraalVM during the native-image build.
 
-    //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=graal-cfg/$currentPlatform/META-INF/native-image"]
+    //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=src/graal-cfg/$currentPlatform/META-INF/native-image"]
 
     debugOptions {
         enabled = false
@@ -119,7 +115,6 @@ task uberJar(type: Jar) {
             'Built-By': System.getProperty('user.name'),
             'Created-By': System.getProperty('java.runtime.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Gradle-Version': 'Gradle ' + gradle.getGradleVersion(),
-            'Automatic-Module-Name': project.group + '.rubikfx',
         )
     }
     from {
