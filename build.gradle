@@ -2,6 +2,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.11'  //requires JDK11+
     id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.12'  //requires GraalVM 22.0+
+    id 'org.beryx.jlink' version '2.24.4'
 }
 
 tasks.wrapper {
@@ -41,7 +42,9 @@ configurations {
 }
 
 dependencies {
-    implementation 'org.fxyz3d:fxyz3d-importers:0.5.4'
+    implementation('org.fxyz3d:fxyz3d-importers:0.5.4') {
+        exclude group: 'org.openjfx', module: '*'
+    }
 
     ['linux', 'mac', 'win'].each { classifier ->
         if (classifier != currentPlatform) {
@@ -130,3 +133,11 @@ gluonfx {
         '-H:+TraceNativeToolUsage',
     ]
 }
+
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = project.mainModuleName
+    }
+}
+

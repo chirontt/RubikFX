@@ -61,9 +61,16 @@
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
                     <mainClass>${main.module}/${main.class}</mainClass>
+                    <!-- JVM options -->
                     <!-- options>
                         <option>-agentlib:native-image-agent=config-merge-dir=src/graal-cfg/${javafx.platform}/META-INF/native-image</option>
                     </options -->
+                    <!-- jlink options -->
+                    <launcher>${main.module}</launcher>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
                 </configuration>
             </plugin>
             <plugin>
