@@ -1,0 +1,60 @@
+name: Maven native image build
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }} with Java ${{ matrix.java-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        java-version: [11, 17]
+        graalvm-version: ['22.1.0']
+      fail-fast: false
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Set up GraalVM ${{ matrix.graalvm-version }} for Java ${{ matrix.java-version }}
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ matrix.graalvm-version }}
+          java-version: ${{ matrix.java-version }}
+          components: 'native-image'
+
+      - name: Report Java version
+        run: |
+          java -version
+          javac -version
+
+      - name: Install needed dev packages in Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
+
+      - name: Build with Maven Wrapper (Linux)
+        run: ./mvnw -V -B gluonfx:build
+        if: runner.os == 'Linux'
+
+      - name: Build with Maven Wrapper (Windows)
+        run: .\mvnw.cmd -V -B gluonfx:build
+        if: runner.os == 'Windows'
+
+      - name: Package Linux artifact
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v2
+        with:
+          name: RubikFX ${{ runner.os }} native image with SubstrateVM for Java ${{ matrix.java-version }}
+          path: target/gluonfx/x86_64-linux/RubikFX
+
+      - name: Package Windows artifacts
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: RubikFX ${{ runner.os }} native image with SubstrateVM for Java ${{ matrix.java-version }}
+          path: target/gluonfx/x86_64-windows/RubikFX.exe
+

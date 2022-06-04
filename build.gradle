@@ -1,12 +1,12 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.11'  //requires JDK11+
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.12'  //requires GraalVM 22.0+
-    id 'org.beryx.jlink' version '2.24.4'
+    id 'org.openjfx.javafxplugin' version '0.0.13'  //requires JDK11+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.13'  //requires GraalVM 22.0+
+    id 'org.beryx.jlink' version '2.25.0'
 }
 
 tasks.wrapper {
-    gradleVersion = '7.4'
+    gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -17,7 +17,7 @@ ext {
     mainClassName = 'com.jpl.games.RubikFX'
     mainModuleName = 'rubikfx'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '17.0.2'  //requires JDK11+
+    javafxVersion = '18.0.1'  //requires JDK11+
     currentPlatform = javafx.platform.classifier
 }
 
@@ -129,7 +129,6 @@ task uberJar(type: Jar) {
 
 gluonfx {
     compilerArgs = [
-        '--allow-incomplete-classpath',
         '-H:+TraceNativeToolUsage',
     ]
 }
