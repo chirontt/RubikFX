@@ -18,6 +18,8 @@
         <launcher.class>com.jpl.games.Launcher</launcher.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
+        <!-- use hardware acceleration by default -->
+        <prism.forceGPU>false</prism.forceGPU>
     </properties>
 
     <dependencies>
@@ -62,9 +64,10 @@
                 <configuration>
                     <mainClass>${main.module}/${main.class}</mainClass>
                     <!-- JVM options -->
-                    <!-- options>
-                        <option>-agentlib:native-image-agent=config-merge-dir=src/graal-cfg/${javafx.platform}/META-INF/native-image</option>
-                    </options -->
+                    <options>
+                        <!-- option>-agentlib:native-image-agent=config-merge-dir=src/graal-cfg/${javafx.platform}/META-INF/native-image</option -->
+                        <option>-Dprism.forceGPU=${prism.forceGPU}</option>
+                    </options>
                     <!-- jlink options -->
                     <launcher>${main.module}</launcher>
                     <stripDebug>true</stripDebug>
@@ -83,6 +86,8 @@
                     <nativeImageArgs>
                         <arg>-H:+TraceNativeToolUsage</arg>
                     </nativeImageArgs>
+                    <!-- enable support for software acceleration -->
+                    <enableSWRendering>true</enableSWRendering>
                 </configuration>
             </plugin>
             <plugin>

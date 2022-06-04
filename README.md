@@ -27,6 +27,12 @@ To build and run the `RubikFX` application in standard JVM environment, execute 
 
 	gradlew run
 
+By default JavaFX 3D will use GPU hardware acceleration for rendering. If hardware acceleration
+is not available, i.e. the RubikFX application shows an empty window, the software acceleration
+feature can be used instead (but slow!) by setting the `prism.forceGPU` system property to `true`:
+
+	gradlew run -Dprism.forceGPU=true
+
 To create an executable uber jar which includes all dependencies for all supported OS'es:
 
 	gradlew uberJar
@@ -35,10 +41,12 @@ and the resulting `RubikFX-1.0.0-SNAPSHOT-no-deps.jar` file should be created in
 and can be executed directly with the `java` command:
 
 	java -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps.jar
+	java -Dprism.forceGPU=true -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps.jar
 
 (or if building on a Windows machine:
 
 	java -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps.jar
+	java -Dprism.forceGPU=true -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps.jar
 
 )
 
@@ -68,9 +76,15 @@ The `nativeBuild` task will take a while to finish, resulting in a native execut
 
 	build/gluonfx/x86_64-linux/RubikFX
 
+and can be run directly:
+
+	./build/gluonfx/x86_64-linux/RubikFX
+	./build/gluonfx/x86_64-linux/RubikFX -Dprism.forceGPU=true
+
 (or if building on a Windows machine:
 
 	build\gluonfx\x86_64-windows\RubikFX.exe
+	build\gluonfx\x86_64-windows\RubikFX.exe -Dprism.forceGPU=true
 
 )
 
@@ -82,18 +96,26 @@ To build and run the `RubikFX` application in standard JVM environment, execute 
 
 	mvnw javafx:run
 
+By default JavaFX 3D will use GPU hardware acceleration for rendering. If hardware acceleration
+is not available, i.e. the RubikFX application shows an empty window, the software acceleration
+feature can be used instead (but slow!) by setting the `prism.forceGPU` system property to `true`:
+
+	mvnw javafx:run -Dprism.forceGPU=true
+
 To create an executable uber jar which includes all dependencies for the current platform:
 
-	mvnw package
+	mvnw gluonfx:build
 
 and the resulting `rubikfx-1.0.0-SNAPSHOT-no-deps-<platform>.jar` file should be created in
 `target` directory, and can be executed directly with the `java` command:
 
 	java -jar target/rubikfx-1.0.0-SNAPSHOT-no-deps-linux.jar
+	java -Dprism.forceGPU=true -jar target/rubikfx-1.0.0-SNAPSHOT-no-deps-linux.jar
 
 (or if building on a Windows machine:
 
 	java -jar target\rubikfx-1.0.0-SNAPSHOT-no-deps-win.jar
+	java -Dprism.forceGPU=true -jar target\rubikfx-1.0.0-SNAPSHOT-no-deps-win.jar
 
 )
 
@@ -120,9 +142,15 @@ The `gluonfx:build` task will take a while to finish, resulting in a native exec
 
 	target/gluonfx/x86_64-linux/RubikFX
 
+and can be run directly:
+
+	./target/gluonfx/x86_64-linux/RubikFX
+	./target/gluonfx/x86_64-linux/RubikFX -Dprism.forceGPU=true
+
 (or if building on a Windows machine:
 
 	target\gluonfx\x86_64-windows\RubikFX.exe
+	target\gluonfx\x86_64-windows\RubikFX.exe -Dprism.forceGPU=true
 
 )
 

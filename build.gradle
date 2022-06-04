@@ -97,6 +97,10 @@ run {
 
     //jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=src/graal-cfg/$currentPlatform/META-INF/native-image"]
 
+    //get system properties specified from the command line (for debugging, etc.)
+    //and pass them on to the running application's JVM
+    systemProperties = System.getProperties()
+
     debugOptions {
         enabled = false
         port = 5566
@@ -131,6 +135,8 @@ gluonfx {
     compilerArgs = [
         '-H:+TraceNativeToolUsage',
     ]
+    //enable support for software acceleration
+    enableSwRendering = true
 }
 
 jlink {
