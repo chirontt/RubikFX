@@ -1,12 +1,12 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'  //requires JDK11+
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.13'  //requires GraalVM 22.0+
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.15'  //requires GraalVM 22.0+
     id 'org.beryx.jlink' version '2.25.0'
 }
 
 tasks.wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '7.5.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -17,7 +17,7 @@ ext {
     mainClassName = 'com.jpl.games.RubikFX'
     mainModuleName = 'rubikfx'
     launcherClassName = 'com.jpl.games.Launcher'
-    javafxVersion = '18.0.1'  //requires JDK11+
+    javafxVersion = '17.0.2'  //requires JDK11+
     currentPlatform = javafx.platform.classifier
 }
 
@@ -36,24 +36,9 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing']
 }
 
-configurations {
-    //define a configuration for other supported OS native libraries (apart from the current OS)
-    otherOSnatives
-}
-
 dependencies {
     implementation('org.fxyz3d:fxyz3d-importers:0.5.4') {
         exclude group: 'org.openjfx', module: '*'
-    }
-
-    ['linux', 'mac', 'win'].each { classifier ->
-        if (classifier != currentPlatform) {
-            otherOSnatives "org.openjfx:javafx-base:$javafxVersion:$classifier"
-            otherOSnatives "org.openjfx:javafx-controls:$javafxVersion:$classifier"
-            otherOSnatives "org.openjfx:javafx-fxml:$javafxVersion:$classifier"
-            otherOSnatives "org.openjfx:javafx-graphics:$javafxVersion:$classifier"
-            otherOSnatives "org.openjfx:javafx-swing:$javafxVersion:$classifier"
-        }
     }
 }
 
@@ -111,10 +96,10 @@ run {
 }
 
 //make an executable uber jar including all dependencies
-//which should work in all supported OS'es (Windows, Mac and Linux)
+//which should work only in current OS platform
 task uberJar(type: Jar) {
     with jar
-    archiveClassifier = 'no-deps'
+    archiveClassifier = "no-deps-$currentPlatform"
     manifest {
         attributes(
             'Main-Class': project.launcherClassName,
@@ -125,8 +110,7 @@ task uberJar(type: Jar) {
         )
     }
     from {
-        def allClasspaths = configurations.runtimeClasspath + configurations.otherOSnatives
-        allClasspaths.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     duplicatesStrategy 'exclude'
 }

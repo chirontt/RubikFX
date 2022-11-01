@@ -104,7 +104,7 @@ feature can be used instead (but slow!) by setting the `prism.forceGPU` system p
 
 To create an executable uber jar which includes all dependencies for the current platform:
 
-	mvnw gluonfx:build
+	mvnw package
 
 and the resulting `rubikfx-1.0.0-SNAPSHOT-no-deps-<platform>.jar` file should be created in
 `target` directory, and can be executed directly with the `java` command:
