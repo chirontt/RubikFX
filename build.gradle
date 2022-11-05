@@ -117,6 +117,7 @@ task uberJar(type: Jar) {
 
 gluonfx {
     compilerArgs = [
+        '--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED',
         '-H:+TraceNativeToolUsage',
     ]
     //enable support for software acceleration
