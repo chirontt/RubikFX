@@ -10,9 +10,9 @@
     <name>RubikFX</name>
 
     <properties>
-        <javafx.version>17.0.2</javafx.version>
+        <javafx.version>17.0.7</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-        <gluonfx.maven.plugin.version>1.0.15</gluonfx.maven.plugin.version>
+        <gluonfx.maven.plugin.version>1.0.18</gluonfx.maven.plugin.version>
         <main.class>com.jpl.games.RubikFX</main.class>
         <main.module>rubikfx</main.module>
         <launcher.class>com.jpl.games.Launcher</launcher.class>
