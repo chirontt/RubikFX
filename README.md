@@ -6,7 +6,7 @@ by José Pereda.)
 
 ![screenshot](RubikFX.jpg "RubixFX")
 
-For a version that can build a native image for desktop, Android and/or iOS platforms,
+For a version that can build native images for desktop, Android and/or iOS platforms,
 see [rubiks-cube](https://github.com/gluonhq/gluon-samples/tree/master/rubiks-cube).
 
 ---
@@ -17,7 +17,7 @@ this desktop application.
 The Gradle or Maven build script produces a `RubikFX` application, for running in standard JVM/JavaFX 11+.
 The build scripts can also produce stand-alone native executables, using
 [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image/) utility,
-for common platforms (Windows, and Linux.)
+for common platforms - Windows, Linux, and MacOS (untested).
 
 ## Gradle build tasks
 
@@ -33,25 +33,22 @@ feature can be used instead (but slow!) by setting the `prism.forceGPU` system p
 
 	gradlew run -Dprism.forceGPU=true
 
-To create an executable uber jar which includes all dependencies for all supported OS'es:
+To create an executable uber jar which includes all dependencies for current platform:
 
 	gradlew uberJar
 
-and the resulting `RubikFX-1.0.0-SNAPSHOT-no-deps.jar` file should be created in `build/libs` directory,
-and can be executed directly with the `java` command:
+and the resulting `RubikFX-1.0.0-SNAPSHOT-no-deps-<platform>.jar` file should be created in `build/libs` directory,
+and can be executed directly with the `java` command, e.g. in a Linux box:
 
-	java -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps.jar
-	java -Dprism.forceGPU=true -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps.jar
+	java -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps-linux.jar
+	java -Dprism.forceGPU=true -jar build/libs/RubikFX-1.0.0-SNAPSHOT-no-deps-linux.jar
 
 (or if building on a Windows machine:
 
-	java -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps.jar
-	java -Dprism.forceGPU=true -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps.jar
+	java -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps-win.jar
+	java -Dprism.forceGPU=true -jar build\libs\RubikFX-1.0.0-SNAPSHOT-no-deps-win.jar
 
 )
-
-This `RubikFX-1.0.0-SNAPSHOT-no-deps.jar` file should be portable across all
-three supported OS'es (Windows, Mac and Linux.)
 
 ### Building native executable
 
@@ -63,16 +60,13 @@ for GraalVM native image creation.
 
 The Gradle build script uses [gluonfx-gradle-plugin](https://github.com/gluonhq/gluonfx-gradle-plugin)
 from Gluon to build the native executable from Gradle with GraalVM.
-GraalVM native-image utility will use the configuration files in
-`src/graal-cfg/<currentPlatform>/META-INF/native-image` folder
-to assist in native-image generation.
 
 Once the GraalVM prerequisites are set up for the current platform,
 run the `nativeBuild` task to produce a native executable:
 
 	gradlew nativeBuild
 
-The `nativeBuild` task will take a while to finish, resulting in a native executable file at:
+The `nativeBuild` task will take a while to finish, resulting in a native executable file at, e.g. in a Linux box:
 
 	build/gluonfx/x86_64-linux/RubikFX
 
@@ -107,7 +101,7 @@ To create an executable uber jar which includes all dependencies for the current
 	mvnw package
 
 and the resulting `rubikfx-1.0.0-SNAPSHOT-no-deps-<platform>.jar` file should be created in
-`target` directory, and can be executed directly with the `java` command:
+`target` directory, and can be executed directly with the `java` command, e.g. in a Linux box:
 
 	java -jar target/rubikfx-1.0.0-SNAPSHOT-no-deps-linux.jar
 	java -Dprism.forceGPU=true -jar target/rubikfx-1.0.0-SNAPSHOT-no-deps-linux.jar
@@ -129,16 +123,13 @@ for GraalVM native image creation.
 
 The Maven build script uses [gluonfx-maven-plugin](https://github.com/gluonhq/gluonfx-maven-plugin)
 from Gluon to build the native executable from Maven with GraalVM.
-GraalVM native-image utility will use the configuration files in
-`src/graal-cfg/<currentPlatform>/META-INF/native-image` folder
-to assist in native-image generation.
 
 Once the GraalVM prerequisites are set up for the current platform,
 run the `gluonfx:build` task to produce a native executable:
 
 	mvnw gluonfx:build
 
-The `gluonfx:build` task will take a while to finish, resulting in a native executable file at:
+The `gluonfx:build` task will take a while to finish, resulting in a native executable file at, e.g. in a Linux box:
 
 	target/gluonfx/x86_64-linux/RubikFX
 

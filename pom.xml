@@ -10,9 +10,9 @@
     <name>RubikFX</name>
 
     <properties>
-        <javafx.version>17.0.7</javafx.version>
+        <javafx.version>21.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-        <gluonfx.maven.plugin.version>1.0.18</gluonfx.maven.plugin.version>
+        <gluonfx.maven.plugin.version>1.0.22</gluonfx.maven.plugin.version>
         <main.class>com.jpl.games.RubikFX</main.class>
         <main.module>rubikfx</main.module>
         <launcher.class>com.jpl.games.Launcher</launcher.class>
@@ -42,15 +42,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-            <!-- include the GraalVM native-image configuration files -->
-            <resource>
-                <directory>src/graal-cfg/${javafx.platform}</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -83,6 +74,10 @@
                 <configuration>
                     <target>${client.target}</target>
                     <mainClass>${main.class}</mainClass>
+                    <reflectionList>
+                        <list>com.sun.prism.shader.Solid_TextureRGB_AlphaTest_Loader</list>
+                        <list>com.sun.prism.shader.Solid_TextureSecondPassLCD_AlphaTest_Loader</list>
+                    </reflectionList>
                     <nativeImageArgs>
                         <arg>--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED</arg>
                         <arg>-H:+TraceNativeToolUsage</arg>
