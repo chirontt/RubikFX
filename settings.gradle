@@ -1,1 +1,16 @@
+pluginManagement {
+    repositories {
+        //repository containing custom 'javafxplugin' which supports extra platforms
+        //such as Linux riscv64, Windows on Arm64, and FreeBSD aarch64/x86_64
+        maven {
+            url = 'https://chirontt.github.io/m2'
+        }
+        gradlePluginPortal()
+    }
+    plugins {
+        //custom 'javafxplugin'
+        id 'org.openjfx.javafxplugin' version '0.1.1-SNAPSHOT'
+    }
+}
+
 rootProject.name = 'RubikFX'

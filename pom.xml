@@ -12,41 +12,205 @@
     <properties>
         <javafx.version>21.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-        <gluonfx.maven.plugin.version>1.0.22</gluonfx.maven.plugin.version>
+        <gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
         <main.class>com.jpl.games.RubikFX</main.class>
         <main.module>rubikfx</main.module>
         <launcher.class>com.jpl.games.Launcher</launcher.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <!-- use hardware acceleration by default -->
         <prism.forceGPU>false</prism.forceGPU>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.fxyz3d</groupId>
-            <artifactId>fxyz3d-importers</artifactId>
-            <version>0.5.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
+    <profiles>
+        <profile>
+            <id>desktop</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <client.target>host</client.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>ios</id>
+            <properties>
+                <client.target>ios</client.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>android</id>
+            <properties>
+                <client.target>android</client.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-aarch64</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux-aarch64</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-riscv64</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                    <arch>riscv64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux-riscv64</javafx.platform>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>freebsd-maven</id>
+                    <name>JavaFX Maven Repo for Linux riscv64, Windows on Arm64 and FreeBSD aarch64/x86_64</name>
+                    <url>https://chirontt.github.io/m2</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>Mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-aarch64</id>
+            <activation>
+                <os>
+                    <family>Mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac-aarch64</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>win</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>win</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>win-aarch64</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>win-aarch64</javafx.platform>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>freebsd-maven</id>
+                    <name>JavaFX Maven Repo for Linux riscv64, Windows on Arm64 and FreeBSD aarch64/x86_64</name>
+                    <url>https://chirontt.github.io/m2</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>bsd</id>
+            <activation>
+                <os>
+                    <name>freebsd</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>bsd</javafx.platform>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>freebsd-maven</id>
+                    <name>JavaFX Maven Repo for Linux riscv64, Windows on Arm64 and FreeBSD aarch64/x86_64</name>
+                    <url>https://chirontt.github.io/m2</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>bsd-aarch64</id>
+            <activation>
+                <os>
+                    <name>freebsd</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>bsd-aarch64</javafx.platform>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>freebsd-maven</id>
+                    <name>JavaFX Maven Repo for Linux riscv64, Windows on Arm64 and FreeBSD aarch64/x86_64</name>
+                    <url>https://chirontt.github.io/m2</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>javafx.platform.custom</id>
+            <activation>
+                <property>
+                    <name>javafx.platform</name>
+                </property>
+            </activation>
+            <properties>
+                <javafx.platform>${javafx.platform}</javafx.platform>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
@@ -89,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -112,110 +276,23 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>desktop</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <client.target>host</client.target>
-            </properties>
-        </profile>
-        <profile>
-            <id>ios</id>
-            <properties>
-                <client.target>ios</client.target>
-            </properties>
-        </profile>
-        <profile>
-            <id>android</id>
-            <properties>
-                <client.target>android</client.target>
-            </properties>
-        </profile>
-        <profile>
-            <id>linux-amd64</id>
-            <activation>
-                <os>
-                    <name>Linux</name>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>linux</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>linux-arm64</id>
-            <activation>
-                <os>
-                    <family>Linux</family>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>linux-aarch64</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac-amd64</id>
-            <activation>
-                <os>
-                    <name>Mac</name>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>mac</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac-arm64</id>
-            <activation>
-                <os>
-                    <family>Mac</family>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>mac-aarch64</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>windows-amd64</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>win</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>windows-arm64</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>win-aarch64</javafx.platform>
-            </properties>
-        </profile>
-        <profile>
-            <id>javafx.platform.custom</id>
-            <activation>
-                <property>
-                    <name>javafx.platform</name>
-                </property>
-            </activation>
-            <properties>
-                <javafx.platform>${javafx.platform}</javafx.platform>
-            </properties>
-        </profile>
-    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fxyz3d</groupId>
+            <artifactId>fxyz3d-importers</artifactId>
+            <version>0.5.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -1,12 +1,12 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.22'
-    id 'org.beryx.jlink' version '3.0.1'
+    id 'org.openjfx.javafxplugin' //version set in settings.gradle
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.23'
+    id 'org.beryx.jlink' version '3.1.1'
 }
 
 tasks.wrapper {
-    gradleVersion = '8.5'
+    gradleVersion = '8.14'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -22,24 +22,32 @@ ext {
 }
 
 repositories {
+    if (currentPlatform == 'linux-riscv64' ||
+        currentPlatform == 'win-aarch64' ||
+        currentPlatform.startsWith('bsd')) {
+        //JavaFX Maven Repo for Linux riscv64, Windows on Arm64, and FreeBSD aarch64/x86_64
+        maven {
+            url = "https://chirontt.github.io/m2"
+        }
+    }
     mavenCentral()
     mavenLocal()
-}
-
-compileJava {
-    options.release = 11  //use JDK11+ for compiling & running
-    options.encoding = 'UTF-8'
-}
-
-javafx {
-    version = javafxVersion
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing']
 }
 
 dependencies {
     implementation('org.fxyz3d:fxyz3d-importers:0.5.4') {
         exclude group: 'org.openjfx', module: '*'
     }
+}
+
+compileJava {
+    options.release = 17
+    options.encoding = 'UTF-8'
+}
+
+javafx {
+    version = javafxVersion
+    modules = ['javafx.controls']
 }
 
 jar {
@@ -103,7 +111,7 @@ task uberJar(type: Jar) {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    duplicatesStrategy 'exclude'
+    duplicatesStrategy = 'exclude'
 }
 
 gluonfx {

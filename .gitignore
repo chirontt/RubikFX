@@ -6,5 +6,6 @@ build
 .gradle
 .idea
 .vscode
+dependency-reduced-pom.xml
 nbproject
 target
